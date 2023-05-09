@@ -11,7 +11,7 @@ from langchain.prompts.chat import (
 )
 import textwrap
 
-COHERE_API_KEY = "XgduAsa6TsoiguTAvjHDbBsBr7FzmXHn4YdVLdbq"
+COHERE_API_KEY = "_____"
 
 text_embeddings = CohereEmbeddings(cohere_api_key=COHERE_API_KEY)
 
