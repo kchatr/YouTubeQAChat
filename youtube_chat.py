@@ -2,7 +2,7 @@ from langchain.document_loaders import YoutubeLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import CohereEmbeddings
 from langchain.vectorstores import FAISS
-from langchain.chat_models import Cohere
+from langchain.llms import Cohere
 from langchain.chains import LLMChain
 from langchain.prompts.chat import (
     ChatPromptTemplate,
@@ -30,7 +30,7 @@ def get_query_response(vector_db, query, num_docs=4):
     docs = vector_db.similarity_search(query, k=num_docs)
     docs_page_content = " ".join([d.page_content for d in docs])
 
-    model = Cohere(cohere_api_key=COHERE_API_KEY, temperature=0, truncate="END", )
+    model = Cohere(cohere_api_key=COHERE_API_KEY, temperature=0, truncate="END", stop=["Human"])
 
     prompt_template = """
         You are a helpful and informative assistant that that can answer questions about youtube videos 
@@ -57,3 +57,23 @@ def get_query_response(vector_db, query, num_docs=4):
     response = chain.run(question=query, docs=docs_page_content)
     response = response.replace("\n", "")
     return response, docs
+
+def main():
+    vid_url = input("Enter the URL of your desired YouTube video: ")
+    query = ""
+
+    db = create_db_from_video_url(vid_url)
+
+    while True:
+        print("Welcome to the YouTube Bot!")
+        query = input("Enter your query, or \"exit\". ")
+
+        if query.lower() == "exit":
+            break
+        else:
+            response = get_query_response(db, query)[0]
+            print(response)
+
+
+if __name__ == "__main__":
+    main()
